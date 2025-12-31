@@ -1,0 +1,12 @@
+{
+  "coingecko_api_key": "YOUR_API_KEY_HERE",
+  "default_top_coins": 100,
+  "default_weights": {
+    "price_change": 0.4,
+    "volume_change": 0.3,
+    "stability": 0.2,
+    "market_cap": 0.1
+  },
+  "default_data_history_days": 7,
+  "update_interval_seconds": 60
+}
