@@ -68,18 +68,19 @@ def logout_view(request):
 
 @api_view(['GET'])
 def check_auth(request):
-    """بررسی وضعیت احراز هویت"""
+    """بررسی وضعیت احراز هویت - صفحه لاگین غیرفعال شده است"""
     return Response({
         'authenticated': True,
-        'username': request.session.get('username', '')
+        'username': 'admin'
     })
 
 
 def check_admin_auth(request):
-    """بررسی احراز هویت ادمین"""
-    return request.session.get('authenticated', False)
+    """بررسی احراز هویت ادمین - صفحه لاگین غیرفعال شده است، همیشه True برمی‌گرداند"""
+    return True
 
 @api_view(['GET', 'PUT'])
+@permission_classes([AllowAny])
 def settings_view(request):
     """دریافت و به‌روزرسانی تنظیمات"""
     if not check_admin_auth(request):
@@ -114,6 +115,7 @@ def monitoring_status_view(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def start_monitoring_view(request):
     """شروع پایش"""
     if not check_admin_auth(request):
@@ -144,6 +146,7 @@ def start_monitoring_view(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def stop_monitoring_view(request):
     """توقف پایش"""
     if not check_admin_auth(request):
@@ -170,6 +173,7 @@ def stop_monitoring_view(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def manual_update_view(request):
     """به‌روزرسانی دستی داده‌ها"""
     if not check_admin_auth(request):

@@ -126,8 +126,14 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:6000",
+    "http://127.0.0.1:6000",
+    "http://191.101.113.163:3000",
+    "http://141.11.0.80:3000",
 ]
 
+# Allow all origins in development (for flexibility)
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # Channels

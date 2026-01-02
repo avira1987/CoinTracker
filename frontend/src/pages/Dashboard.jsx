@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getCoins, getMonitoringStatus, startMonitoring, stopMonitoring, manualUpdate, logout } from '../services/api'
+import { getCoins, getMonitoringStatus, startMonitoring, stopMonitoring, manualUpdate } from '../services/api'
 import wsService from '../services/websocket'
 import './Dashboard.css'
 
@@ -103,15 +103,6 @@ function Dashboard() {
     }
   }
 
-  const handleLogout = async () => {
-    try {
-      await logout()
-      window.location.href = '/login'
-    } catch (error) {
-      console.error('Error logging out:', error)
-    }
-  }
-
   const formatNumber = (num) => {
     if (!num) return '0'
     return new Intl.NumberFormat('fa-IR').format(Number(num))
@@ -163,7 +154,6 @@ function Dashboard() {
         <nav className="nav-links">
           <Link to="/">داشبورد</Link>
           <Link to="/settings">تنظیمات</Link>
-          <button onClick={handleLogout} className="logout-btn">خروج</button>
         </nav>
       </header>
 

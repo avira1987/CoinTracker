@@ -3,7 +3,26 @@
  */
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/coins/'
+// استفاده از IP عمومی برای WebSocket
+const getWebSocketUrl = () => {
+  // اگر متغیر محیطی تنظیم شده باشد، از آن استفاده می‌شود
+  if (import.meta.env.VITE_WS_URL) {
+    return import.meta.env.VITE_WS_URL
+  }
+  
+  // تشخیص خودکار: اگر در localhost هستیم از localhost استفاده می‌کنیم
+  const hostname = window.location.hostname
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'ws://localhost:8000/ws/coins/'
+  }
+  
+  // در غیر این صورت از IP عمومی استفاده می‌کنیم
+  // استفاده از ws یا wss بر اساس پروتکل صفحه
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  return `${protocol}//141.11.0.80:8000/ws/coins/`
+}
+
+const WS_URL = getWebSocketUrl()
 
 class WebSocketService {
   constructor() {

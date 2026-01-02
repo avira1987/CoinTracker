@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getSettings, updateSettings, logout } from '../services/api'
+import { getSettings, updateSettings } from '../services/api'
 import './Settings.css'
 
 function Settings() {
@@ -18,9 +18,11 @@ function Settings() {
       const response = await getSettings()
       setSettings(response.data)
       setLoading(false)
+      setMessage('')
     } catch (error) {
       console.error('Error loading settings:', error)
-      setMessage('خطا در بارگذاری تنظیمات')
+      const errorMessage = error.response?.data?.error || error.message || 'خطا در بارگذاری تنظیمات'
+      setMessage(`خطا در بارگذاری تنظیمات: ${errorMessage}`)
       setLoading(false)
     }
   }
@@ -70,15 +72,6 @@ function Settings() {
     }
   }
 
-  const handleLogout = async () => {
-    try {
-      await logout()
-      window.location.href = '/login'
-    } catch (error) {
-      console.error('Error logging out:', error)
-    }
-  }
-
   if (loading) {
     return <div className="loading">در حال بارگذاری...</div>
   }
@@ -100,7 +93,6 @@ function Settings() {
         <nav className="nav-links">
           <Link to="/">داشبورد</Link>
           <Link to="/settings">تنظیمات</Link>
-          <button onClick={handleLogout} className="logout-btn">خروج</button>
         </nav>
       </header>
 
@@ -145,7 +137,7 @@ function Settings() {
                 value={settings.price_weight || 0}
                 onChange={(e) => handleWeightChange('price_weight', e.target.value)}
               />
-              <span className="weight-percent">{(settings.price_weight * 100).toFixed(0)}%</span>
+              <span className="weight-percent">{((settings.price_weight || 0) * 100).toFixed(0)}%</span>
             </div>
             <div className="form-group">
               <label>تغییرات حجم:</label>
@@ -157,7 +149,7 @@ function Settings() {
                 value={settings.volume_weight || 0}
                 onChange={(e) => handleWeightChange('volume_weight', e.target.value)}
               />
-              <span className="weight-percent">{(settings.volume_weight * 100).toFixed(0)}%</span>
+              <span className="weight-percent">{((settings.volume_weight || 0) * 100).toFixed(0)}%</span>
             </div>
             <div className="form-group">
               <label>پایداری:</label>
@@ -169,7 +161,7 @@ function Settings() {
                 value={settings.stability_weight || 0}
                 onChange={(e) => handleWeightChange('stability_weight', e.target.value)}
               />
-              <span className="weight-percent">{(settings.stability_weight * 100).toFixed(0)}%</span>
+              <span className="weight-percent">{((settings.stability_weight || 0) * 100).toFixed(0)}%</span>
             </div>
             <div className="form-group">
               <label>حجم بازار:</label>
@@ -181,7 +173,7 @@ function Settings() {
                 value={settings.market_cap_weight || 0}
                 onChange={(e) => handleWeightChange('market_cap_weight', e.target.value)}
               />
-              <span className="weight-percent">{(settings.market_cap_weight * 100).toFixed(0)}%</span>
+              <span className="weight-percent">{((settings.market_cap_weight || 0) * 100).toFixed(0)}%</span>
             </div>
           </section>
 
