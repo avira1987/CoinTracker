@@ -228,12 +228,52 @@
   background: white;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  overflow-x: auto;
+  overflow-x: visible;
 }
 
 .coins-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.875rem;
+}
+
+.coins-table th:nth-child(1),
+.coins-table td:nth-child(1) {
+  width: 6%;
+}
+
+.coins-table th:nth-child(2),
+.coins-table td:nth-child(2) {
+  width: 16%;
+}
+
+.coins-table th:nth-child(3),
+.coins-table td:nth-child(3) {
+  width: 6%;
+}
+
+.coins-table th:nth-child(4),
+.coins-table td:nth-child(4) {
+  width: 10%;
+}
+
+.coins-table th:nth-child(5),
+.coins-table td:nth-child(5),
+.coins-table th:nth-child(6),
+.coins-table td:nth-child(6),
+.coins-table th:nth-child(7),
+.coins-table td:nth-child(7),
+.coins-table th:nth-child(8),
+.coins-table td:nth-child(8) {
+  width: 9%;
+}
+
+.coins-table th:nth-child(9),
+.coins-table td:nth-child(9),
+.coins-table th:nth-child(10),
+.coins-table td:nth-child(10) {
+  width: 13%;
 }
 
 .coins-table thead {
@@ -242,10 +282,13 @@
 }
 
 .coins-table th {
-  padding: 1rem;
+  padding: 0.5rem 0.4rem;
   text-align: right;
   font-weight: 600;
-  white-space: nowrap;
+  font-size: 0.85rem;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.3;
 }
 
 .coins-table tbody tr {
@@ -258,14 +301,16 @@
 }
 
 .coins-table td {
-  padding: 1rem;
+  padding: 0.5rem 0.4rem;
   text-align: right;
+  word-wrap: break-word;
+  font-size: 0.875rem;
 }
 
 .rank-cell {
   font-weight: 700;
   color: #667eea;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .name-cell {
@@ -291,7 +336,7 @@
 
 .symbol-cell {
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .positive {
@@ -317,11 +362,18 @@
 /* Responsive styles */
 @media (max-width: 1200px) {
   .coins-table-container {
-    overflow-x: auto;
+    overflow-x: visible;
   }
   
   .coins-table {
-    min-width: 1200px;
+    width: 100%;
+    font-size: 0.8rem;
+  }
+  
+  .coins-table th,
+  .coins-table td {
+    padding: 0.4rem 0.3rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -370,20 +422,21 @@
 
   .coins-table-container {
     border-radius: 5px;
+    overflow-x: visible;
   }
 
   .coins-table {
-    min-width: 1000px;
-    font-size: 0.85rem;
+    width: 100%;
+    font-size: 0.75rem;
   }
 
   .coins-table th,
   .coins-table td {
-    padding: 0.75rem 0.5rem;
+    padding: 0.4rem 0.25rem;
   }
 
   .coins-table th {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
   }
 
   .rank-cell {
@@ -452,17 +505,17 @@
   }
 
   .coins-table {
-    min-width: 900px;
-    font-size: 0.75rem;
+    width: 100%;
+    font-size: 0.7rem;
   }
 
   .coins-table th,
   .coins-table td {
-    padding: 0.5rem 0.25rem;
+    padding: 0.35rem 0.2rem;
   }
 
   .coins-table th {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .rank-cell {

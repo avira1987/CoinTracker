@@ -277,12 +277,12 @@ function Dashboard() {
                 <th>نام</th>
                 <th>نماد</th>
                 <th>قیمت فعلی</th>
-                <th>تغییرات 1 ساعت</th>
-                <th>تغییرات 24 ساعت</th>
-                <th>تغییرات 7 روز</th>
-                <th>تغییرات حجم 24h</th>
-                <th>حجم بازار</th>
-                <th>حجم معاملات 24h</th>
+                <th>1h</th>
+                <th>24h</th>
+                <th>7d</th>
+                <th>حجم 24h</th>
+                <th>بازار</th>
+                <th>معاملات 24h</th>
               </tr>
             </thead>
             <tbody>
