@@ -214,8 +214,7 @@ function Dashboard() {
             <span>نحوه کار سیستم پایش</span>
             <span className={`toggle-icon ${isDescriptionOpen ? 'open' : ''}`}>▼</span>
           </button>
-          {isDescriptionOpen && (
-            <div className="description-content">
+          <div className={`description-content ${isDescriptionOpen ? 'open' : 'closed'}`}>
             <div className="description-section">
               <h3>📊 جمع‌آوری داده‌ها</h3>
               <p>
@@ -268,7 +267,6 @@ function Dashboard() {
               </p>
             </div>
           </div>
-          )}
         </div>
 
         <div className="coins-table-container">

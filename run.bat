@@ -33,12 +33,18 @@ if %errorlevel% == 0 (
         
         if %errorlevel% == 0 (
             echo.
+            echo ⏳ Waiting for services to start...
+            timeout /t 3 >nul
+            echo.
+            echo 📋 Checking container status and ports...
+            docker-compose ps
+            echo.
             echo ✅ Project started successfully!
             echo.
             echo 🌐 Application access:
-            echo    Frontend: http://localhost
-            echo    Backend API: http://localhost/api/
-            echo    Admin Panel: http://localhost/admin/
+            echo    Frontend: http://localhost:3000
+            echo    Backend API: http://localhost:8000/api/
+            echo    Admin Panel: http://localhost:8000/admin/
             echo.
             echo 👤 Default login credentials:
             echo    Username: admin34_
@@ -47,9 +53,11 @@ if %errorlevel% == 0 (
             echo 📊 To view logs: docker-compose logs -f
             echo 🛑 To stop: docker-compose down
             echo.
-            echo Opening browser...
-            timeout /t 3 >nul
-            start http://localhost
+            echo ⏳ Waiting for services to be ready...
+            timeout /t 5 >nul
+            echo.
+            echo 🌐 Opening browser at http://localhost:3000...
+            start http://localhost:3000
         ) else (
             echo.
             echo ❌ Error starting Docker!

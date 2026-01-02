@@ -10,19 +10,24 @@ const getWebSocketUrl = () => {
     return import.meta.env.VITE_WS_URL
   }
   
-  // تشخیص خودکار: اگر در localhost هستیم از localhost استفاده می‌کنیم
+  // استفاده از hostname و port فعلی صفحه برای ساخت URL
+  // این کار باعث می‌شود که از همان hostname و port که صفحه از آن بارگذاری شده استفاده شود
   const hostname = window.location.hostname
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'ws://localhost:8000/ws/coins/'
-  }
-  
-  // در غیر این صورت از IP عمومی استفاده می‌کنیم
+  const port = window.location.port
   // استفاده از ws یا wss بر اساس پروتکل صفحه
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  return `${protocol}//141.11.0.80:8000/ws/coins/`
+  
+  // اگر پورت خالی است (پورت پیش‌فرض) یا در حالت development هستیم، از پورت backend استفاده می‌کنیم
+  // در حالت production با nginx، از همان پورت صفحه استفاده می‌شود
+  let backendPort = port
+  if (!port || port === '3000' || port === '6000') {
+    // در حالت development، از پورت backend استفاده می‌کنیم
+    backendPort = import.meta.env.VITE_BACKEND_PORT || '8000'
+  }
+  
+  // ساخت URL بر اساس hostname و port فعلی
+  return `${protocol}//${hostname}${backendPort ? ':' + backendPort : ''}/ws/coins/`
 }
-
-const WS_URL = getWebSocketUrl()
 
 class WebSocketService {
   constructor() {
@@ -36,8 +41,11 @@ class WebSocketService {
       return
     }
 
+    // تولید URL به صورت پویا در زمان اتصال
+    const wsUrl = getWebSocketUrl()
+
     try {
-      this.ws = new ReconnectingWebSocket(WS_URL, [], {
+      this.ws = new ReconnectingWebSocket(wsUrl, [], {
         maxReconnectionDelay: 10000,
         minReconnectionDelay: 1000,
         reconnectionDelayGrowFactor: 1.3,

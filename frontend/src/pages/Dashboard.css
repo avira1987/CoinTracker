@@ -166,13 +166,26 @@
 }
 
 .description-content {
-  padding: 2rem;
-}
-
-.description-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+  opacity: 0;
+  padding: 0 2rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+.description-content.open {
+  max-height: 2000px;
+  opacity: 1;
+  padding: 2rem;
+}
+
+.description-content.closed {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 2rem;
 }
 
 .description-section {

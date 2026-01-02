@@ -10,14 +10,22 @@ const getApiBaseUrl = () => {
     return import.meta.env.VITE_API_URL
   }
   
-  // تشخیص خودکار: اگر در localhost هستیم از localhost استفاده می‌کنیم
+  // استفاده از hostname و port فعلی صفحه برای ساخت URL
+  // این کار باعث می‌شود که از همان hostname و port که صفحه از آن بارگذاری شده استفاده شود
   const hostname = window.location.hostname
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:8000/api'
+  const protocol = window.location.protocol
+  const port = window.location.port
+  
+  // اگر پورت خالی است (پورت پیش‌فرض) یا در حالت development هستیم، از پورت backend استفاده می‌کنیم
+  // در حالت production با nginx، از همان پورت صفحه استفاده می‌شود
+  let backendPort = port
+  if (!port || port === '3000' || port === '6000') {
+    // در حالت development، از پورت backend استفاده می‌کنیم
+    backendPort = import.meta.env.VITE_BACKEND_PORT || '8000'
   }
   
-  // در غیر این صورت از IP عمومی استفاده می‌کنیم
-  return 'http://141.11.0.80:8000/api'
+  // ساخت URL بر اساس hostname و port فعلی
+  return `${protocol}//${hostname}${backendPort ? ':' + backendPort : ''}/api`
 }
 
 const API_BASE_URL = getApiBaseUrl()
