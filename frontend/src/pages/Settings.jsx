@@ -93,6 +93,7 @@ function Settings() {
         <nav className="nav-links">
           <Link to="/">داشبورد</Link>
           <Link to="/settings">تنظیمات</Link>
+          <Link to="/tutorial">آموزش</Link>
         </nav>
       </header>
 

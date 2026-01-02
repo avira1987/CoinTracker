@@ -157,3 +157,78 @@
   background: #e0e0e0;
 }
 
+/* Responsive styles */
+@media (max-width: 768px) {
+  .settings-form {
+    max-width: 100%;
+  }
+
+  .settings-section {
+    padding: 1.5rem;
+  }
+
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .form-group input {
+    width: 100%;
+  }
+
+  .weight-percent {
+    min-width: auto;
+    text-align: right;
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    width: 100%;
+    padding: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-section {
+    padding: 1rem;
+  }
+
+  .settings-section h2 {
+    font-size: 1.2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .weight-info {
+    padding: 0.75rem;
+  }
+
+  .weight-info p {
+    font-size: 0.9rem;
+  }
+
+  .total-weight {
+    font-size: 1rem;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+}
+

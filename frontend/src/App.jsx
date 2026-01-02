@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
+import Tutorial from './pages/Tutorial'
 import './App.css'
 
 function App() {
@@ -16,6 +17,10 @@ function App() {
         <Route 
           path="/settings" 
           element={<Settings />} 
+        />
+        <Route 
+          path="/tutorial" 
+          element={<Tutorial />} 
         />
         <Route 
           path="/" 
