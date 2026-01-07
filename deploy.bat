@@ -25,27 +25,30 @@ if errorlevel 1 (
 
 echo [OK] Docker is installed
 
-REM بررسی نصب Docker Compose
+REM بررسی نصب Docker Compose و تعیین دستور صحیح
 echo Checking Docker Compose installation...
+set "USE_DOCKER_COMPOSE=0"
 docker-compose --version >nul 2>&1
-if errorlevel 1 (
+if not errorlevel 1 (
+    set "USE_DOCKER_COMPOSE=1"
+    echo [OK] Docker Compose is available
+) else (
     docker compose version >nul 2>&1
-    if errorlevel 1 (
+    if not errorlevel 1 (
+        set "USE_DOCKER_COMPOSE=2"
+        echo [OK] Docker Compose plugin is available
+    ) else (
         echo [ERROR] Docker Compose is not installed!
         pause
         exit /b 1
     )
-    set COMPOSE_CMD=docker compose
-) else (
-    set COMPOSE_CMD=docker-compose
 )
-
-echo [OK] Docker Compose is available
 
 REM بررسی docker-compose.yml
 if not exist "docker-compose.yml" (
     echo [ERROR] docker-compose.yml not found!
-    echo Please make sure you're in the project root directory
+    echo Please make sure you are in the project root directory
+    echo Current directory: %CD%
     pause
     exit /b 1
 )
@@ -57,7 +60,7 @@ if not exist "settings.json" (
     echo Creating settings.json from settings.example.json...
     
     if exist "settings.example.json" (
-        copy /Y settings.example.json settings.json >nul
+        copy /Y "settings.example.json" "settings.json" >nul
         echo [OK] settings.json created
         echo.
         echo [IMPORTANT] Please edit settings.json and add your CoinGecko API key!
@@ -79,7 +82,7 @@ if not exist "settings.json" (
             echo   "default_data_history_days": 7,
             echo   "update_interval_seconds": 60
             echo }
-        ) > settings.json
+        ) > "settings.json"
         echo [IMPORTANT] Please edit settings.json and add your CoinGecko API key!
         pause
     )
@@ -90,7 +93,11 @@ if not exist "settings.json" (
 REM توقف کانتینرهای قبلی
 echo.
 echo Stopping any existing containers...
-%COMPOSE_CMD% down >nul 2>&1
+if "!USE_DOCKER_COMPOSE!"=="1" (
+    docker-compose down >nul 2>&1
+) else (
+    docker compose down >nul 2>&1
+)
 
 REM Build و اجرای کانتینرها
 echo.
@@ -98,14 +105,20 @@ echo Building and starting Docker containers...
 echo This may take a few minutes on first run...
 echo.
 
-%COMPOSE_CMD% up -d --build
+if "!USE_DOCKER_COMPOSE!"=="1" (
+    docker-compose up -d --build
+    set "DOCKER_COMPOSE_CMD=docker-compose"
+) else (
+    docker compose up -d --build
+    set "DOCKER_COMPOSE_CMD=docker compose"
+)
 
 if not errorlevel 1 (
     echo.
     echo [SUCCESS] Project started successfully!
     echo.
     echo Waiting for services to be ready...
-    ping 127.0.0.1 -n 6 >nul
+    timeout /t 5 >nul
     
     echo.
     echo ========================================
@@ -129,15 +142,19 @@ if not errorlevel 1 (
     echo    Useful Commands
     echo ========================================
     echo.
-    echo View logs:        %COMPOSE_CMD% logs -f
-    echo Stop services:    %COMPOSE_CMD% down
-    echo Restart services: %COMPOSE_CMD% restart
-    echo View status:      %COMPOSE_CMD% ps
+    echo View logs:        %DOCKER_COMPOSE_CMD% logs -f
+    echo Stop services:    %DOCKER_COMPOSE_CMD% down
+    echo Restart services: %DOCKER_COMPOSE_CMD% restart
+    echo View status:      %DOCKER_COMPOSE_CMD% ps
     echo.
     
     REM بررسی وضعیت کانتینرها
     echo Container status:
-    %COMPOSE_CMD% ps
+    if "!USE_DOCKER_COMPOSE!"=="1" (
+        docker-compose ps
+    ) else (
+        docker compose ps
+    )
     echo.
     
     echo Opening browser at http://localhost...
@@ -146,10 +163,11 @@ if not errorlevel 1 (
 ) else (
     echo.
     echo [ERROR] Failed to start Docker containers
-    echo Check logs with: %COMPOSE_CMD% logs
+    echo Check logs with: %DOCKER_COMPOSE_CMD% logs
     pause
     exit /b 1
 )
 
 echo.
+popd
 pause

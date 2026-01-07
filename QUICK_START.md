@@ -2,6 +2,13 @@
 
 برای راه‌اندازی پروژه روی سیستم جدید با Docker:
 
+## ⚠️ نکته مهم (Windows):
+اگر پوشه پروژه `CoinTracker-main` نام دارد، ابتدا نام آن را تغییر دهید:
+```cmd
+ren CoinTracker-main CoinTracker
+cd CoinTracker
+```
+
 ## Linux/Mac:
 ```bash
 chmod +x deploy.sh && ./deploy.sh
@@ -12,10 +19,17 @@ chmod +x deploy.sh && ./deploy.sh
 deploy.bat
 ```
 
+یا اگر خطا گرفتید، از نسخه ایمن استفاده کنید:
+```cmd
+deploy-safe.bat
+```
+
 یا اگر PowerShell دارید:
 ```powershell
 .\deploy.bat
 ```
+
+**مشکل دارید؟** [DEPLOY_TROUBLESHOOTING.md](DEPLOY_TROUBLESHOOTING.md) را مطالعه کنید.
 
 ---
 
