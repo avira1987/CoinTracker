@@ -1,4 +1,6 @@
-# 🔧 رفع مشکل خطای "\CoinTracker-main was unexpected at this time"
+# 🔧 راهنمای رفع مشکلات استقرار
+
+## مشکل 1: "\CoinTracker-main was unexpected at this time"
 
 ## مشکل
 
@@ -62,7 +64,45 @@ docker-compose up -d --build
 ❌ بد: `C:\My Projects\CoinTracker-main`
 ✅ خوب: `C:\Projects\CoinTracker`
 
-## علت مشکل
+## مشکل 2: "no configuration file provided: not found"
+
+### علت
+- فایل `docker-compose.yml` در مسیر فعلی وجود ندارد
+- در پوشه اشتباه هستید
+- پوشه‌ها تودرتو شده‌اند (مثل `CoinTracker-main (3)\CoinTracker-main`)
+
+### راه‌حل
+
+```cmd
+# 1. بررسی کنید در مسیر صحیح هستید
+dir docker-compose.yml
+
+# 2. اگر فایل پیدا نشد، به پوشه بالا بروید
+cd ..
+dir docker-compose.yml
+
+# 3. یا از اسکریپت کمکی استفاده کنید
+check-path.bat
+
+# 4. یا مستقیماً به مسیر صحیح بروید
+cd C:\Users\Administrator\Desktop\CoinTracker-main
+docker-compose up -d --build
+```
+
+### بررسی ساختار صحیح
+
+پوشه باید شامل این فایل‌ها باشد:
+```
+CoinTracker/
+├── docker-compose.yml      ← باید اینجا باشد
+├── Dockerfile.backend
+├── Dockerfile.frontend
+├── backend/
+├── frontend/
+└── nginx/
+```
+
+## علت مشکل 1
 
 این خطا معمولاً به دلیل:
 - استفاده از کاراکترهای خاص در نام پوشه (مثل `-main`)
@@ -75,3 +115,5 @@ docker-compose up -d --build
 1. پوشه را به `CoinTracker` تغییر نام دهید
 2. از `deploy-safe.bat` استفاده کنید
 3. یا مستقیماً `docker-compose up -d --build` اجرا کنید
+
+📖 برای راهنمای کامل: [SETUP_GUIDE.md](SETUP_GUIDE.md)
