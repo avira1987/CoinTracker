@@ -13,6 +13,9 @@ from api.views import (
     start_monitoring_view,
     stop_monitoring_view,
     manual_update_view,
+    standing_proxy_view,
+    update_standing_view,
+    fetch_social_data_view,
 )
 
 router = DefaultRouter()
@@ -28,5 +31,8 @@ urlpatterns = [
     path('monitoring/start/', start_monitoring_view, name='monitoring-start'),
     path('monitoring/stop/', stop_monitoring_view, name='monitoring-stop'),
     path('monitoring/update/', manual_update_view, name='manual-update'),
+    path('standing/', standing_proxy_view, name='standing-proxy'),
+    path('standing/update/', update_standing_view, name='standing-update'),
+    path('social/fetch/', fetch_social_data_view, name='fetch-social-data'),
 ]
 

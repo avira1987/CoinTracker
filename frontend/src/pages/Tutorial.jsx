@@ -1,8 +1,96 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { getSettings } from '../services/api'
 import './Tutorial.css'
 
 function Tutorial() {
+  const [settings, setSettings] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadSettings()
+
+    // به‌روزرسانی تنظیمات هنگام بازگشت به صفحه (برای همگام‌سازی با تغییرات در تنظیمات)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadSettings()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  const loadSettings = async () => {
+    try {
+      const response = await getSettings()
+      setSettings(response.data)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error loading settings:', error)
+      // در صورت خطا، از مقادیر پیش‌فرض استفاده می‌کنیم
+      setSettings({
+        price_weight: 0.40,
+        volume_weight: 0.30,
+        stability_weight: 0.20,
+        market_cap_weight: 0.10,
+        social_weight: 0.00
+      })
+      setLoading(false)
+    }
+  }
+
+  // تابع برای فرمت کردن درصد
+  const formatPercent = (value) => {
+    return ((value || 0) * 100).toFixed(0)
+  }
+
+  // ساخت فرمول پویا بر اساس تنظیمات
+  const getFormulaText = () => {
+    if (!settings) return ''
+    
+    const parts = []
+    if (settings.price_weight > 0) {
+      parts.push(`(تغییرات قیمت × ${formatPercent(settings.price_weight)}%)`)
+    }
+    if (settings.volume_weight > 0) {
+      parts.push(`(تغییرات حجم × ${formatPercent(settings.volume_weight)}%)`)
+    }
+    if (settings.stability_weight > 0) {
+      parts.push(`(پایداری × ${formatPercent(settings.stability_weight)}%)`)
+    }
+    if (settings.market_cap_weight > 0) {
+      parts.push(`(حجم بازار × ${formatPercent(settings.market_cap_weight)}%)`)
+    }
+    if (settings.social_weight > 0) {
+      parts.push(`(سوشال × ${formatPercent(settings.social_weight)}%)`)
+    }
+    
+    return parts.join(' + ')
+  }
+
+  if (loading) {
+    return (
+      <div className="tutorial">
+        <header className="header">
+          <h1>CoinTracker - آموزش و شرایط کار با بات</h1>
+          <nav className="nav-links">
+            <Link to="/">داشبورد</Link>
+            <Link to="/settings">تنظیمات</Link>
+            <Link to="/tutorial">آموزش</Link>
+            <Link to="/documentation">📚 مستندات</Link>
+          </nav>
+        </header>
+        <div className="content">
+          <div className="loading">در حال بارگذاری...</div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="tutorial">
       <header className="header">
@@ -11,6 +99,7 @@ function Tutorial() {
           <Link to="/">داشبورد</Link>
           <Link to="/settings">تنظیمات</Link>
           <Link to="/tutorial">آموزش</Link>
+          <Link to="/documentation">📚 مستندات</Link>
         </nav>
       </header>
 
@@ -81,6 +170,165 @@ function Tutorial() {
             <p>
               سیستم از WebSocket استفاده می‌کند و به‌روزرسانی‌ها به صورت لحظه‌ای در 
               داشبورد نمایش داده می‌شوند. نیازی به رفرش کردن صفحه نیست.
+            </p>
+          </div>
+        </section>
+
+        {/* بخش عوامل ترکیبی و غیر ترکیبی رتبه‌بندی */}
+        <section className="tutorial-section">
+          <h2>🔢 عوامل ترکیبی و غیر ترکیبی رتبه‌بندی</h2>
+          
+          <div className="tutorial-step">
+            <h3>📊 فرمول کلی رتبه‌بندی</h3>
+            <p>
+              سیستم رتبه‌بندی بر اساس فرمول وزنی زیر عمل می‌کند:
+            </p>
+            <div style={{
+              background: '#f0f0f0',
+              padding: '1.5rem',
+              borderRadius: '8px',
+              margin: '1rem 0',
+              fontFamily: 'monospace',
+              textAlign: 'center',
+              border: '2px solid #667eea'
+            }}>
+              <strong>نمره نهایی = {getFormulaText()}</strong>
+            </div>
+            <p>
+              کوین‌ها بر اساس این نمره نهایی مرتب می‌شوند و رتبه 1 به کوینی با بالاترین نمره تعلق می‌گیرد.
+            </p>
+            <p style={{ marginTop: '1rem', padding: '1rem', background: '#e8f5e9', borderRadius: '5px', fontSize: '0.9rem' }}>
+              <strong>💡 توجه:</strong> این فرمول بر اساس تنظیمات فعلی شما است. شما می‌توانید وزن‌ها را در صفحه 
+              <Link to="/settings" style={{ margin: '0 0.3rem', color: '#667eea', textDecoration: 'underline' }}>تنظیمات</Link>
+              تغییر دهید و فرمول به‌صورت خودکار به‌روزرسانی می‌شود.
+            </p>
+          </div>
+
+          <div className="tutorial-step">
+            <h3>📈 عوامل اصلی (غیر ترکیبی)</h3>
+            <p>
+              سیستم از {[
+                settings.price_weight > 0,
+                settings.volume_weight > 0,
+                settings.stability_weight > 0,
+                settings.market_cap_weight > 0,
+                settings.social_weight > 0
+              ].filter(Boolean).length} عامل اصلی برای محاسبه رتبه استفاده می‌کند:
+            </p>
+            
+            <ul className="tutorial-list">
+              {(() => {
+                let counter = 1
+                return (
+                  <>
+                    {settings.price_weight > 0 && (
+                      <li>
+                        <strong>{counter++}. تغییرات قیمت ({formatPercent(settings.price_weight)}% وزن)</strong>
+                        <br />
+                        تغییر درصدی قیمت در 24 ساعت گذشته. این عامل نرمال‌سازی می‌شود:
+                        <br />• تغییرات منفی بیشتر از -100% = نمره 0
+                        <br />• تغییرات صفر = نمره 50
+                        <br />• تغییرات بیشتر از +200% = نمره 100
+                      </li>
+                    )}
+                    
+                    {settings.volume_weight > 0 && (
+                      <li>
+                        <strong>{counter++}. تغییرات حجم ({formatPercent(settings.volume_weight)}% وزن)</strong>
+                        <br />
+                        تغییر درصدی حجم معاملات در 24 ساعت گذشته. نرمال‌سازی:
+                        <br />• تغییرات منفی بیشتر از -100% = نمره 0
+                        <br />• تغییرات بیشتر از +500% = نمره 100
+                      </li>
+                    )}
+                    
+                    {settings.stability_weight > 0 && (
+                      <li>
+                        <strong>{counter++}. پایداری ({formatPercent(settings.stability_weight)}% وزن)</strong>
+                        <br />
+                        این یک <strong>عامل ترکیبی</strong> است که از سه زیرعامل تشکیل شده (جزئیات در بخش بعدی)
+                      </li>
+                    )}
+                    
+                    {settings.market_cap_weight > 0 && (
+                      <li>
+                        <strong>{counter++}. حجم بازار ({formatPercent(settings.market_cap_weight)}% وزن)</strong>
+                        <br />
+                        ارزش کل بازار هر ارز دیجیتال. این عامل به صورت نسبی نسبت به تمام کوین‌ها نرمال‌سازی می‌شود:
+                        <br />• بزرگترین حجم بازار = نمره 100
+                        <br />• کوچکترین حجم بازار = نمره 0
+                      </li>
+                    )}
+                    
+                    {settings.social_weight > 0 && (
+                      <li>
+                        <strong>{counter++}. سوشال ({formatPercent(settings.social_weight)}% وزن)</strong>
+                        <br />
+                        معیارهای مرتبط با شبکه‌های اجتماعی و فعالیت‌های اجتماعی کوین.
+                      </li>
+                    )}
+                  </>
+                )
+              })()}
+            </ul>
+          </div>
+
+          <div className="tutorial-step">
+            <h3>🔗 عامل ترکیبی: پایداری</h3>
+            <p>
+              پایداری یک <strong>عامل ترکیبی</strong> است که خود از سه زیرعامل تشکیل شده و نشان‌دهنده 
+              ثبات و قابلیت اعتماد یک کوین است:
+            </p>
+            
+            <ul className="tutorial-list">
+              <li>
+                <strong>1. واریانس تغییرات قیمت (40% از نمره پایداری)</strong>
+                <br />
+                محاسبه می‌شود بر اساس تغییرات قیمت در تاریخچه (تعداد روزهای قابل تنظیم در تنظیمات).
+                <br />• واریانس کمتر = پایداری بیشتر = نمره بالاتر
+                <br />• کوین‌هایی با نوسانات کمتر، نمره پایداری بهتری دریافت می‌کنند
+              </li>
+              
+              <li>
+                <strong>2. ثبات روند (30% از نمره پایداری)</strong>
+                <br />
+                بررسی می‌کند که آیا تغییرات قیمت در یک جهت مداوم هستند یا خیر.
+                <br />• تغییرات مداوم در یک جهت (مثبت یا منفی) = ثبات بیشتر
+                <br />• تغییرات متناوب و نامنظم = ثبات کمتر
+                <br />• این معیار بر اساس 5 تغییر آخر قیمت محاسبه می‌شود
+              </li>
+              
+              <li>
+                <strong>3. ریسک برگشت (30% از نمره پایداری)</strong>
+                <br />
+                احتمال برگشت قیمت به حالت اولیه را بر اساس نوسانات تاریخی محاسبه می‌کند.
+                <br />• نوسانات کمتر = ریسک برگشت کمتر = نمره بالاتر
+                <br />• نوسانات زیاد = ریسک برگشت بیشتر = نمره پایین‌تر
+              </li>
+            </ul>
+            
+            <p style={{ marginTop: '1rem', padding: '1rem', background: '#e3f2fd', borderRadius: '5px' }}>
+              <strong>نکته:</strong> نمره نهایی پایداری از ترکیب این سه زیرعامل با فرمول زیر محاسبه می‌شود:
+              <br />
+              <strong>پایداری = (واریانس × 40%) + (ثبات روند × 30%) + (ریسک برگشت × 30%)</strong>
+            </p>
+          </div>
+
+          <div className="tutorial-step">
+            <h3>🎯 نحوه رتبه‌بندی نهایی</h3>
+            <p>
+              پس از محاسبه نمره نهایی برای هر کوین:
+            </p>
+            <ol className="tutorial-list" style={{ listStyleType: 'decimal', paddingRight: '2rem' }}>
+              <li>تمام کوین‌ها بر اساس نمره نهایی به صورت <strong>نزولی</strong> مرتب می‌شوند</li>
+              <li>کوین با <strong>بالاترین نمره</strong> رتبه <strong>1</strong> دریافت می‌کند</li>
+              <li>کوین‌های بعدی به ترتیب نزولی نمره، رتبه‌های 2، 3، 4 و ... دریافت می‌کنند</li>
+              <li>رتبه‌ها در جدول داشبورد نمایش داده می‌شوند</li>
+            </ol>
+            <p style={{ marginTop: '1rem', padding: '1rem', background: '#fff3e0', borderRadius: '5px' }}>
+              <strong>💡 نکته مهم:</strong> شما می‌توانید وزن هر عامل را در صفحه تنظیمات تغییر دهید. 
+              این به شما امکان می‌دهد تا بر اساس استراتژی خود، اهمیت هر معیار را تنظیم کنید. 
+              فقط توجه داشته باشید که مجموع وزن‌ها باید برابر 1 باشد.
             </p>
           </div>
         </section>

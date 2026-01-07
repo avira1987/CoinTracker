@@ -8,10 +8,12 @@ from datetime import timedelta
 from models.coin_models import Settings, MonitoringStatus
 from services.coingecko_service import CoinGeckoService
 from services.ranking_service import RankingService
+from services.standing_service import StandingService
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import logging
 import json
+import threading
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +26,7 @@ class SchedulerService:
     def __init__(self):
         self.scheduler = None
         self.is_running = False
+        self.standing_scheduler = None
 
     def update_task(self):
         """تسک به‌روزرسانی داده‌ها"""
@@ -37,6 +40,8 @@ class SchedulerService:
             # به‌روزرسانی رتبه‌بندی
             ranking_service = RankingService()
             ranking_service.update_rankings()
+            
+            # به‌روزرسانی standing (هر یک ساعت یکبار در task جداگانه انجام می‌شود)
             
             # به‌روزرسانی وضعیت
             status_obj = MonitoringStatus.get_status()
@@ -67,7 +72,7 @@ class SchedulerService:
             from api.serializers import CryptocurrencySerializer, MonitoringStatusSerializer
             
             settings = Settings.get_settings()
-            coins = list(Cryptocurrency.objects.all().order_by('rank')[:settings.top_coins_count])
+            coins = list(Cryptocurrency.objects.all().order_by('-rank_score')[:settings.top_coins_count])
             coin_serializer = CryptocurrencySerializer(coins, many=True)
             
             status_obj = MonitoringStatus.get_status()
@@ -129,8 +134,13 @@ class SchedulerService:
             
             logger.info(f"Monitoring started with interval: {settings.update_interval} seconds")
             
-            # اجرای اولیه
+            # اجرای اولیه (CoinGecko و Standing به صورت موازی)
             self.update_task()
+            
+            # راه‌اندازی scheduler برای standing (هر یک ساعت یکبار)
+            # توجه: standing در update_task هم به صورت موازی اجرا می‌شود
+            # این scheduler فقط برای به‌روزرسانی دوره‌ای standing است
+            self.start_standing_scheduler()
             
         except Exception as e:
             logger.error(f"Error starting monitoring: {str(e)}")
@@ -147,6 +157,11 @@ class SchedulerService:
                 self.scheduler.shutdown()
                 self.scheduler = None
             
+            # توقف standing scheduler
+            if self.standing_scheduler:
+                self.standing_scheduler.shutdown()
+                self.standing_scheduler = None
+            
             self.is_running = False
             logger.info("Monitoring stopped")
             
@@ -154,6 +169,42 @@ class SchedulerService:
             logger.error(f"Error stopping monitoring: {str(e)}")
             raise
 
+    def start_standing_scheduler(self):
+        """راه‌اندازی scheduler برای به‌روزرسانی standing هر یک ساعت"""
+        try:
+            if self.standing_scheduler:
+                return
+            
+            # ایجاد scheduler جداگانه برای standing
+            self.standing_scheduler = BackgroundScheduler()
+            self.standing_scheduler.add_job(
+                self.update_standing_task,
+                trigger=IntervalTrigger(hours=1),  # هر یک ساعت یکبار
+                id='standing_update_job',
+                replace_existing=True
+            )
+            
+            self.standing_scheduler.start()
+            logger.info("Standing scheduler started (updates every 1 hour)")
+            
+            # اجرای اولیه
+            self.update_standing_task()
+            
+        except Exception as e:
+            logger.error(f"Error starting standing scheduler: {str(e)}")
+    
+    def update_standing_task(self):
+        """تسک به‌روزرسانی داده‌های standing"""
+        try:
+            logger.info("Starting standing data update...")
+            success = StandingService.fetch_and_update_standing()
+            if success:
+                logger.info("Standing data update completed successfully")
+            else:
+                logger.warning("Standing data update failed")
+        except Exception as e:
+            logger.error(f"Error in standing update task: {str(e)}")
+    
     def restart_scheduler(self):
         """راه‌اندازی مجدد scheduler"""
         if self.is_running:

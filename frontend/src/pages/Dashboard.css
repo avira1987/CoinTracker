@@ -240,40 +240,45 @@
 
 .coins-table th:nth-child(1),
 .coins-table td:nth-child(1) {
-  width: 6%;
+  width: 5%;
 }
 
 .coins-table th:nth-child(2),
 .coins-table td:nth-child(2) {
-  width: 16%;
+  width: 13%;
 }
 
 .coins-table th:nth-child(3),
 .coins-table td:nth-child(3) {
-  width: 6%;
+  width: 9%;
 }
 
 .coins-table th:nth-child(4),
 .coins-table td:nth-child(4) {
-  width: 10%;
+  width: 5%;
 }
 
 .coins-table th:nth-child(5),
-.coins-table td:nth-child(5),
+.coins-table td:nth-child(5) {
+  width: 9%;
+}
+
 .coins-table th:nth-child(6),
 .coins-table td:nth-child(6),
 .coins-table th:nth-child(7),
 .coins-table td:nth-child(7),
 .coins-table th:nth-child(8),
-.coins-table td:nth-child(8) {
-  width: 9%;
+.coins-table td:nth-child(8),
+.coins-table th:nth-child(9),
+.coins-table td:nth-child(9) {
+  width: 7%;
 }
 
-.coins-table th:nth-child(9),
-.coins-table td:nth-child(9),
 .coins-table th:nth-child(10),
-.coins-table td:nth-child(10) {
-  width: 13%;
+.coins-table td:nth-child(10),
+.coins-table th:nth-child(11),
+.coins-table td:nth-child(11) {
+  width: 11%;
 }
 
 .coins-table thead {
@@ -332,6 +337,18 @@
   color: #667eea;
   font-weight: 500;
   opacity: 0.8;
+}
+
+.standing-cell {
+  font-weight: 600;
+  color: #667eea;
+  text-align: center;
+}
+
+.social-rank-cell {
+  font-weight: 600;
+  color: #667eea;
+  text-align: center;
 }
 
 .symbol-cell {

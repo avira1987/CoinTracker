@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
 import Tutorial from './pages/Tutorial'
+import Documentation from './pages/Documentation'
+import SocialData from './pages/SocialData'
 import './App.css'
 
 function App() {
@@ -21,6 +23,14 @@ function App() {
         <Route 
           path="/tutorial" 
           element={<Tutorial />} 
+        />
+        <Route 
+          path="/documentation" 
+          element={<Documentation />} 
+        />
+        <Route 
+          path="/social-data" 
+          element={<SocialData />} 
         />
         <Route 
           path="/" 

@@ -29,6 +29,7 @@ class Command(BaseCommand):
         settings.volume_weight = weights.get('volume_change', settings.volume_weight)
         settings.stability_weight = weights.get('stability', settings.stability_weight)
         settings.market_cap_weight = weights.get('market_cap', settings.market_cap_weight)
+        settings.social_weight = weights.get('social', settings.social_weight)
         
         settings.data_history_days = settings_data.get('default_data_history_days', settings.data_history_days)
         settings.update_interval = settings_data.get('update_interval_seconds', settings.update_interval)

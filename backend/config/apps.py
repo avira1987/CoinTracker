@@ -33,6 +33,7 @@ class ConfigConfig(AppConfig):
                     settings.volume_weight = weights.get('volume_change', 0.30)
                     settings.stability_weight = weights.get('stability', 0.20)
                     settings.market_cap_weight = weights.get('market_cap', 0.10)
+                    settings.social_weight = weights.get('social', 0.00)
                 
                 if settings.data_history_days == 7:  # مقدار پیش‌فرض
                     settings.data_history_days = settings_data.get('default_data_history_days', 7)

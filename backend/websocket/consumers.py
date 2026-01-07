@@ -89,7 +89,7 @@ class CoinConsumer(AsyncWebsocketConsumer):
     def get_coins(self):
         """دریافت لیست کوین‌ها از دیتابیس"""
         settings = Settings.get_settings()
-        coins = Cryptocurrency.objects.all().order_by('rank')[:settings.top_coins_count]
+        coins = Cryptocurrency.objects.all().order_by('-rank_score')[:settings.top_coins_count]
         serializer = CryptocurrencySerializer(coins, many=True)
         return serializer.data
 

@@ -3,7 +3,7 @@ from models.coin_models import Cryptocurrency, Settings, MonitoringStatus
 
 
 class CryptocurrencySerializer(serializers.ModelSerializer):
-    """Serializer برای ارزهای دیجیتال"""
+    """Serializer برای ارزهای دیجیتال با جزئیات کامل"""
     rank_reason = serializers.SerializerMethodField()
 
     class Meta:
@@ -11,7 +11,12 @@ class CryptocurrencySerializer(serializers.ModelSerializer):
         fields = [
             'id', 'coin_id', 'name', 'symbol', 'current_price', 'market_cap',
             'volume_24h', 'price_change_1h', 'price_change_24h', 'price_change_7d',
-            'volume_change_24h', 'rank', 'rank_score', 'last_updated', 'rank_reason'
+            'volume_change_24h', 'standing', 'rank', 'rank_score', 'last_updated', 'rank_reason',
+            # جزئیات بیشتر
+            'high_24h', 'low_24h', 'circulating_supply', 'total_supply', 'max_supply',
+            'market_cap_rank', 'fully_diluted_valuation', 'total_value_locked',
+            'image_url', 'description', 'homepage_url', 'blockchain_site',
+            'official_forum_url', 'subreddit_url', 'github_url', 'twitter_handle', 'created_at'
         ]
 
     def get_rank_reason(self, obj):
@@ -43,7 +48,7 @@ class SettingsSerializer(serializers.ModelSerializer):
         model = Settings
         fields = [
             'api_key', 'top_coins_count', 'price_weight', 'volume_weight',
-            'stability_weight', 'market_cap_weight', 'data_history_days',
+            'stability_weight', 'market_cap_weight', 'social_weight', 'data_history_days',
             'update_interval', 'updated_at'
         ]
 

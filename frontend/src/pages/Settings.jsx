@@ -52,7 +52,8 @@ function Settings() {
       parseFloat(settings.price_weight || 0) +
       parseFloat(settings.volume_weight || 0) +
       parseFloat(settings.stability_weight || 0) +
-      parseFloat(settings.market_cap_weight || 0)
+      parseFloat(settings.market_cap_weight || 0) +
+      parseFloat(settings.social_weight || 0)
 
     if (Math.abs(totalWeight - 1.0) > 0.01) {
       setMessage('مجموع وزن‌ها باید برابر 1 باشد')
@@ -84,7 +85,8 @@ function Settings() {
     (parseFloat(settings.price_weight) || 0) +
     (parseFloat(settings.volume_weight) || 0) +
     (parseFloat(settings.stability_weight) || 0) +
-    (parseFloat(settings.market_cap_weight) || 0)
+    (parseFloat(settings.market_cap_weight) || 0) +
+    (parseFloat(settings.social_weight) || 0)
 
   return (
     <div className="settings">
@@ -94,6 +96,7 @@ function Settings() {
           <Link to="/">داشبورد</Link>
           <Link to="/settings">تنظیمات</Link>
           <Link to="/tutorial">آموزش</Link>
+          <Link to="/documentation">📚 مستندات</Link>
         </nav>
       </header>
 
@@ -175,6 +178,18 @@ function Settings() {
                 onChange={(e) => handleWeightChange('market_cap_weight', e.target.value)}
               />
               <span className="weight-percent">{((settings.market_cap_weight || 0) * 100).toFixed(0)}%</span>
+            </div>
+            <div className="form-group">
+              <label>سوشال:</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                value={settings.social_weight || 0}
+                onChange={(e) => handleWeightChange('social_weight', e.target.value)}
+              />
+              <span className="weight-percent">{((settings.social_weight || 0) * 100).toFixed(0)}%</span>
             </div>
           </section>
 

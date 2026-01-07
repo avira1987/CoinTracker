@@ -8,12 +8,20 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://141.11.0.80:8000',
+        target: 'http://localhost:8000',
         changeOrigin: true,
+        secure: false,
+        // نگه داشتن مسیر /api در target
       },
       '/ws': {
-        target: 'ws://141.11.0.80:8000',
+        target: 'ws://localhost:8000',
         ws: true,
+        changeOrigin: true,
+      },
+      '/standing': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
       }
     }
   }

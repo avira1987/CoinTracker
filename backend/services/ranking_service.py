@@ -129,10 +129,33 @@ class RankingService:
         normalized = ((market_cap - min_cap) / (max_cap - min_cap)) * 100
         return max(Decimal('0'), min(Decimal('100'), Decimal(str(normalized))))
 
+    def normalize_standing(self, standing, all_standings):
+        """
+        نرمال‌سازی standing (سوشال رنک) به بازه 0-100
+        """
+        if not all_standings or standing is None or standing == 0:
+            return Decimal('50')
+
+        # فیلتر کردن مقادیر None و 0
+        valid_standings = [s for s in all_standings if s is not None and s > 0]
+        if not valid_standings:
+            return Decimal('50')
+
+        max_standing = max(valid_standings)
+        min_standing = min(valid_standings)
+
+        if max_standing == min_standing:
+            return Decimal('50')
+
+        # نرمال‌سازی: بزرگترین = 100, کوچکترین = 0
+        normalized = ((standing - min_standing) / (max_standing - min_standing)) * 100
+        return max(Decimal('0'), min(Decimal('100'), Decimal(str(normalized))))
+
     def calculate_rank_score(self, cryptocurrency, all_cryptocurrencies):
         """
         محاسبه نمره رتبه‌بندی با فرمول وزنی
-        Score = (PriceChange * 0.4) + (VolumeChange * 0.3) + (Stability * 0.2) + (MarketCap * 0.1)
+        Score = (PriceChange * weight) + (VolumeChange * weight) + (Stability * weight) + 
+                (MarketCap * weight) + (Social * weight)
         """
         try:
             # نرمال‌سازی تغییرات قیمت
@@ -148,13 +171,18 @@ class RankingService:
             all_market_caps = [c.market_cap for c in all_cryptocurrencies if c.market_cap > 0]
             market_cap_score = self.normalize_market_cap(cryptocurrency.market_cap, all_market_caps)
 
+            # نرمال‌سازی standing (سوشال)
+            all_standings = [c.standing for c in all_cryptocurrencies if c.standing is not None and c.standing > 0]
+            social_score = self.normalize_standing(cryptocurrency.standing, all_standings)
+
             # اعمال وزن‌ها
             settings = self.settings
             final_score = (
                 price_score * settings.price_weight +
                 volume_score * settings.volume_weight +
                 stability_score * settings.stability_weight +
-                market_cap_score * settings.market_cap_weight
+                market_cap_score * settings.market_cap_weight +
+                social_score * settings.social_weight
             )
 
             return final_score
