@@ -44,6 +44,22 @@
 
 ### با Docker (توصیه می‌شود)
 
+#### روش سریع (تک فایل):
+
+**Linux/Mac:**
+```bash
+chmod +x deploy.sh && ./deploy.sh
+```
+
+**Windows:**
+```cmd
+deploy.bat
+```
+
+اسکریپت به صورت خودکار همه چیز را راه‌اندازی می‌کند. برای جزئیات بیشتر [DEPLOY.md](DEPLOY.md) یا [QUICK_START.md](QUICK_START.md) را مطالعه کنید.
+
+#### روش دستی:
+
 ```bash
 # 1. کلون کردن پروژه
 git clone https://github.com/avira1987/CoinTracker.git
@@ -55,10 +71,7 @@ cd CoinTracker
 # 3. اجرای پروژه
 docker-compose up -d --build
 
-# 4. اجرای migrations
-docker-compose exec backend python manage.py migrate
-
-# 5. دسترسی به برنامه
+# 4. دسترسی به برنامه
 # Frontend: http://localhost
 # Backend API: http://localhost/api/
 # Admin Panel: http://localhost/admin/
